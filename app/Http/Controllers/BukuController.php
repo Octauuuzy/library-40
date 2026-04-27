@@ -12,7 +12,9 @@ class BukuController extends Controller
      */
     public function index()
     {
-        //
+        $bukus = Buku::latest()->get();
+
+        return view('buku.index', compact('bukus'));
     }
 
     /**
@@ -20,7 +22,7 @@ class BukuController extends Controller
      */
     public function create()
     {
-        //
+        return view('buku.create');
     }
 
     /**
@@ -28,7 +30,13 @@ class BukuController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $this->validatedData($request);
+
+        Buku::create($data);
+
+        return redirect()
+            ->route('buku.index')
+            ->with('success', 'Data buku berhasil ditambahkan.');
     }
 
     /**
@@ -36,7 +44,7 @@ class BukuController extends Controller
      */
     public function show(Buku $buku)
     {
-        //
+        return redirect()->route('buku.edit', $buku);
     }
 
     /**
@@ -44,7 +52,7 @@ class BukuController extends Controller
      */
     public function edit(Buku $buku)
     {
-        //
+        return view('buku.edit', compact('buku'));
     }
 
     /**
@@ -52,7 +60,13 @@ class BukuController extends Controller
      */
     public function update(Request $request, Buku $buku)
     {
-        //
+        $data = $this->validatedData($request);
+
+        $buku->update($data);
+
+        return redirect()
+            ->route('buku.index')
+            ->with('success', 'Data buku berhasil diperbarui.');
     }
 
     /**
@@ -60,6 +74,20 @@ class BukuController extends Controller
      */
     public function destroy(Buku $buku)
     {
-        //
+        $buku->delete();
+
+        return redirect()
+            ->route('buku.index')
+            ->with('success', 'Data buku berhasil dihapus.');
+    }
+
+    private function validatedData(Request $request): array
+    {
+        return $request->validate([
+            'judul' => ['required', 'string', 'max:255'],
+            'pengarang' => ['required', 'string', 'max:255'],
+            'tahun_terbit' => ['required', 'integer', 'digits:4', 'min:1000', 'max:9999'],
+            'stok' => ['required', 'integer', 'min:0'],
+        ]);
     }
 }
