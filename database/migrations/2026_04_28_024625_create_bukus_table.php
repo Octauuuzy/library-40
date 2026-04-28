@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasTable('buku')) {
-            return;
-        }
-
-        Schema::create('buku', function (Blueprint $table) {
+        Schema::create('bukus', function (Blueprint $table) {
             $table->id();
             $table->string('judul');
             $table->string('pengarang');
             $table->year('tahun_terbit');
-            $table->unsignedInteger('stok')->default(1);
+            $table->integer('stok');
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('buku');
+        Schema::dropIfExists('bukus');
     }
 };
