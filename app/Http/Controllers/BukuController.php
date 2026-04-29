@@ -52,6 +52,12 @@ class BukuController extends Controller
 
         Buku::create($data);
 
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Menambahkan buku baru: ' . $request->judul
+        ]);
+
         return redirect()->route('buku.index')->with('success', 'Buku berhasil ditambahkan.');
     }
 
@@ -84,8 +90,8 @@ class BukuController extends Controller
                 unlink(public_path($buku->cover));
             }
             $destinationPath = public_path('assets/covers');
-            if (!File::exists($destinationPath)) {
-                File::makeDirectory($destinationPath, 0755, true, true);
+            if (!\Illuminate\Support\Facades\File::exists($destinationPath)) {
+                \Illuminate\Support\Facades\File::makeDirectory($destinationPath, 0755, true, true);
             }
             $imageName = time() . '.' . $request->cover->extension();  
             $request->cover->move($destinationPath, $imageName);
@@ -93,6 +99,12 @@ class BukuController extends Controller
         }
 
         $buku->update($data);
+
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Memperbarui data buku: ' . $buku->judul
+        ]);
 
         return redirect()->route('buku.index')->with('success', 'Buku berhasil diperbarui.');
     }
@@ -103,6 +115,13 @@ class BukuController extends Controller
             unlink(public_path($buku->cover));
         }
         $buku->delete();
+
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Menghapus buku: ' . $buku->judul
+        ]);
+
         return redirect()->route('buku.index')->with('success', 'Buku berhasil dihapus.');
     }
 }

@@ -48,6 +48,12 @@ class AnggotaController extends Controller
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
         ]);
 
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Menambahkan anggota baru: ' . $request->username
+        ]);
+
         return redirect()->route('anggota.index')->with('success', 'Anggota berhasil ditambahkan.');
     }
 
@@ -97,6 +103,12 @@ class AnggotaController extends Controller
 
         $user->update($data);
 
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Memperbarui data anggota: ' . $user->username
+        ]);
+
         return redirect()->route('anggota.index')->with('success', 'Data anggota berhasil diperbarui.');
     }
 
@@ -107,6 +119,12 @@ class AnggotaController extends Controller
     {
         $user = User::findOrFail($id);
         $user->delete();
+
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Menghapus anggota: ' . $user->username
+        ]);
 
         return redirect()->route('anggota.index')->with('success', 'Anggota berhasil dihapus.');
     }

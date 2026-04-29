@@ -31,6 +31,10 @@ Route::middleware([\App\Http\Middleware\AdminMiddleware::class])->group(function
     Route::delete('/peminjaman/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
     Route::post('/peminjaman/{peminjaman}/return', [PeminjamanController::class, 'returnBook'])->name('peminjaman.return');
     Route::post('/peminjaman/settings', [PeminjamanController::class, 'updateSetting'])->name('peminjaman.settings');
+    
+    // Logs Routes
+    Route::get('/logs', [\App\Http\Controllers\LogController::class, 'index'])->name('logs.index');
+    Route::delete('/logs/clear', [\App\Http\Controllers\LogController::class, 'clear'])->name('logs.clear');
 });
 
 Route::middleware('auth')->group(function () {

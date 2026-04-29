@@ -37,6 +37,12 @@ class KategoriController extends Controller
             'nama' => $request->nama,
         ]);
 
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Menambahkan kategori baru: ' . $request->nama
+        ]);
+
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
@@ -71,6 +77,12 @@ class KategoriController extends Controller
             'nama' => $request->nama,
         ]);
 
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Memperbarui nama kategori menjadi: ' . $request->nama
+        ]);
+
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diperbarui.');
     }
 
@@ -81,6 +93,12 @@ class KategoriController extends Controller
     {
         $kategori = \App\Models\Kategori::findOrFail($id);
         $kategori->delete();
+
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Menghapus kategori: ' . $kategori->nama
+        ]);
 
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil dihapus.');
     }

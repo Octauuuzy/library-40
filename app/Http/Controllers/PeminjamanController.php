@@ -50,6 +50,12 @@ class PeminjamanController extends Controller
                 'tgl_dikembalikan' => Carbon::now('Asia/Jakarta')
             ]);
             
+            \App\Models\Log::create([
+                'user_id' => auth()->id(),
+                'username' => auth()->user()->username ?? 'System',
+                'deskripsi' => 'Menandai buku dikembalikan. ID Pinjam: ' . $peminjaman->id
+            ]);
+
             return redirect()->route('peminjaman.index')->with('success', 'Status buku berhasil diubah menjadi Dikembalikan.');
         }
         
@@ -76,6 +82,12 @@ class PeminjamanController extends Controller
             Setting::create($request->only('toleransi_hari', 'denda_per_hari'));
         }
 
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Mengubah pengaturan denda dan toleransi.'
+        ]);
+
         return redirect()->route('peminjaman.index')->with('success', 'Pengaturan denda dan toleransi berhasil diperbarui.');
     }
 
@@ -86,6 +98,12 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::findOrFail($id);
         $peminjaman->delete();
+
+        \App\Models\Log::create([
+            'user_id' => auth()->id(),
+            'username' => auth()->user()->username ?? 'System',
+            'deskripsi' => 'Menghapus data peminjaman ID: ' . $id
+        ]);
 
         return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil dihapus.');
     }
