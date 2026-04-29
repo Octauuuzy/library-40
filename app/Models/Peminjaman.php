@@ -16,12 +16,15 @@ class Peminjaman extends Model
         'buku_id',
         'tanggal_pinjam',
         'tanggal_kembali',
+        'tgl_dikembalikan',
+        'denda',
         'status',
     ];
 
     protected $casts = [
         'tanggal_pinjam' => 'date',
         'tanggal_kembali' => 'date',
+        'tgl_dikembalikan' => 'date',
     ];
 
     public function user()

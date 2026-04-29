@@ -13,7 +13,7 @@ class DashboardController extends Controller
     public function index()
     {
         $totalBuku = Buku::count();
-        $totalAnggota = User::where('role', 'user')->count();
+        $totalAnggota = User::count();
         $totalKategori = Kategori::count();
         
         $sedangDipinjam = Peminjaman::where('status', 'Dipinjam')->count();

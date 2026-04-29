@@ -12,7 +12,7 @@ class AnggotaController extends Controller
      */
     public function index()
     {
-        $anggotas = User::all();
+        $anggotas = User::paginate(15);
         $title = 'Data Anggota';
         return view('anggota.index', compact('anggotas', 'title'));
     }
@@ -30,7 +30,25 @@ class AnggotaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users',
+            'no_hp' => 'nullable|string|max:20',
+            'role' => 'required|in:admin,user',
+            'password' => 'required|string|min:8',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'no_hp' => $request->no_hp,
+            'role' => $request->role,
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+        ]);
+
+        return redirect()->route('anggota.index')->with('success', 'Anggota berhasil ditambahkan.');
     }
 
     /**
@@ -54,7 +72,32 @@ class AnggotaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'no_hp' => 'nullable|string|max:20',
+            'role' => 'required|in:admin,user',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        $data = [
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'no_hp' => $request->no_hp,
+            'role' => $request->role,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('anggota.index')->with('success', 'Data anggota berhasil diperbarui.');
     }
 
     /**
@@ -62,6 +105,9 @@ class AnggotaController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('anggota.index')->with('success', 'Anggota berhasil dihapus.');
     }
 }

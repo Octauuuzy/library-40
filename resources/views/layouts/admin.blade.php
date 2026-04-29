@@ -19,13 +19,13 @@
         
         <!-- Sidebar -->
         <aside class="w-64 bg-[#1e293b] text-white flex-shrink-0 fixed h-full z-20">
-            <div class="h-16 flex items-center px-6 border-b border-gray-700">
+            <div class="flex items-center px-6 py-3 border-b border-gray-700 h-16">
                 <div class="flex items-center space-x-3">
-                    <!-- Logo Placeholder -->
-                    <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center overflow-hidden">
-                        <img src="https://via.placeholder.com/150/007bff/ffffff?text=Logo" alt="Logo" class="w-full h-full object-cover">
+                    <!-- Logo -->
+                    <div class="w-[42px] h-[42px] flex items-center justify-center">
+                        <img src="{{ asset('assets/logo.png') }}" alt="Logo" class="w-full h-full object-contain">
                     </div>
-                    <span class="text-lg font-bold tracking-wider">MIZ Library</span>
+                    <span class="text-lg font-bold tracking-wider">Perpus Digital</span>
                 </div>
             </div>
             
@@ -43,7 +43,7 @@
                         </svg>
                         Anggota
                     </a>
-                    <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white">
+                    <a href="{{ route('kategori.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('kategori.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
                         <svg class="mr-3 h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                         </svg>
@@ -55,7 +55,7 @@
                         </svg>
                         Buku
                     </a>
-                    <a href="#" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white">
+                    <a href="{{ route('peminjaman.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('peminjaman.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
                         <svg class="mr-3 h-5 w-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                         </svg>
@@ -93,7 +93,7 @@
                         {{ \Carbon\Carbon::now()->format('d M Y') }}
                     </span>
                     <div class="text-sm font-medium text-gray-700">
-                        Halo, {{ Auth::user()->name }}
+                        Halo, {{ Auth::check() ? Auth::user()->name : 'Tamu (Tanpa Akun)' }}
                     </div>
                 </div>
             </header>
