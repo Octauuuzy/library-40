@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Buku extends Model
 {
-    protected $fillable = ['kategori_id', 'cover', 'judul', 'pengarang', 'tahun_terbit', 'stok'];
+    protected $table = 'bukus';
+    
+    protected $fillable = ['judul', 'pengarang', 'tahun_terbit', 'stok', 'cover'];
 
-    public function kategori()
+    public function kategoris()
     {
-        return $this->belongsTo(Kategori::class);
+        return $this->belongsToMany(Kategori::class, 'buku_kategori', 'buku_id', 'kategori_id');
     }
 
     public function peminjamans()

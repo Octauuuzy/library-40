@@ -35,11 +35,11 @@ class AnggotaController extends Controller
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'no_hp' => 'nullable|string|max:20',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,anggota',
             'password' => 'required|string|min:8',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
@@ -47,6 +47,17 @@ class AnggotaController extends Controller
             'role' => $request->role,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
         ]);
+
+        if ($request->role === 'anggota') {
+            \App\Models\Anggota::create([
+                'id' => $user->id,
+                'nis' => str_pad($user->id, 7, '0', STR_PAD_LEFT), // auto generated nis
+                'nama' => $request->name,
+                'kelas' => '-',
+                'no_hp' => $request->no_hp,
+                'alamat' => '-'
+            ]);
+        }
 
         \App\Models\Log::create([
             'user_id' => auth()->id(),
@@ -85,7 +96,7 @@ class AnggotaController extends Controller
             'username' => 'required|string|max:255|unique:users,username,' . $id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'no_hp' => 'nullable|string|max:20',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,anggota',
             'password' => 'nullable|string|min:8',
         ]);
 
@@ -102,6 +113,27 @@ class AnggotaController extends Controller
         }
 
         $user->update($data);
+
+        if ($user->role === 'anggota') {
+            $anggota = \App\Models\Anggota::find($id);
+            if ($anggota) {
+                $anggota->update([
+                    'nama' => $request->name,
+                    'no_hp' => $request->no_hp,
+                ]);
+            } else {
+                \App\Models\Anggota::create([
+                    'id' => $user->id,
+                    'nis' => str_pad($user->id, 7, '0', STR_PAD_LEFT),
+                    'nama' => $request->name,
+                    'kelas' => '-',
+                    'no_hp' => $request->no_hp,
+                    'alamat' => '-'
+                ]);
+            }
+        } else {
+            \App\Models\Anggota::where('id', $id)->delete();
+        }
 
         \App\Models\Log::create([
             'user_id' => auth()->id(),

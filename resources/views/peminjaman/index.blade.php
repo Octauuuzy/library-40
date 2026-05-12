@@ -81,13 +81,13 @@
                                 @foreach($peminjamans as $key => $pinjam)
                                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                                         <td class="py-3 px-4 text-left whitespace-nowrap">{{ $key + 1 }}</td>
-                                        <td class="py-3 px-4 text-left text-gray-800 font-medium">{{ $pinjam->user->name ?? 'User Terhapus' }}</td>
+                                        <td class="py-3 px-4 text-left text-gray-800 font-medium">{{ $pinjam->anggota->nama ?? 'Anggota Terhapus' }}</td>
                                         <td class="py-3 px-4 text-left text-gray-800">{{ $pinjam->buku->judul ?? 'Buku Terhapus' }}</td>
-                                        <td class="py-3 px-4 text-center">{{ $pinjam->tanggal_pinjam->format('d/m/Y') }}</td>
-                                        <td class="py-3 px-4 text-center">{{ $pinjam->tanggal_kembali->format('d/m/Y') }}</td>
+                                        <td class="py-3 px-4 text-center">{{ $pinjam->tgl_pinjam->format('d/m/Y') }}</td>
+                                        <td class="py-3 px-4 text-center">{{ $pinjam->tgl_kembali_rencana->format('d/m/Y') }}</td>
                                         <td class="py-3 px-4 text-center">
-                                            @if($pinjam->tgl_dikembalikan)
-                                                {{ $pinjam->tgl_dikembalikan->format('d/m/Y') }}
+                                            @if($pinjam->tgl_kembali_aktual)
+                                                {{ $pinjam->tgl_kembali_aktual->format('d/m/Y') }}
                                             @else
                                                 <span class="text-gray-400">-</span>
                                             @endif
@@ -96,15 +96,17 @@
                                             Rp {{ number_format($pinjam->denda, 0, ',', '.') }}
                                         </td>
                                         <td class="py-3 px-4 text-center">
-                                            @if($pinjam->status == 'Dipinjam')
+                                            @if($pinjam->status == 'dipinjam')
                                                 <span class="bg-yellow-100 text-yellow-800 py-1 px-3 rounded-full text-xs font-semibold border border-yellow-200">Dipinjam</span>
+                                            @elseif($pinjam->status == 'terlambat')
+                                                <span class="bg-red-100 text-red-800 py-1 px-3 rounded-full text-xs font-semibold border border-red-200">Terlambat</span>
                                             @else
                                                 <span class="bg-green-100 text-green-800 py-1 px-3 rounded-full text-xs font-semibold border border-green-200">Dikembalikan</span>
                                             @endif
                                         </td>
                                         <td class="py-3 px-4 text-center">
                                             <div class="flex item-center justify-center space-x-2">
-                                                @if($pinjam->status == 'Dipinjam')
+                                                @if($pinjam->status == 'dipinjam' || $pinjam->status == 'terlambat')
                                                     <button type="button" @click="openReturnModal({{ $pinjam->id }})" class="bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-md transition-colors" title="Tandai Dikembalikan">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />

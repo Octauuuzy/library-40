@@ -16,9 +16,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/katalog', function () {
-    return "<h1>Katalog Buku</h1><p>Selamat datang Anggota! Halaman ini sedang dalam pengembangan.</p><form method='POST' action='".route('logout')."'>".csrf_field()."<button type='submit'>Logout</button></form>";
-})->middleware(['auth', 'verified'])->name('katalog');
+Route::get('/katalog', [\App\Http\Controllers\KatalogController::class, 'index'])->middleware(['auth', 'verified'])->name('katalog');
 
 Route::middleware([\App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

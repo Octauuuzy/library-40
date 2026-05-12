@@ -11,7 +11,7 @@ class BukuController extends Controller
 {
     public function index()
     {
-        $bukus = Buku::with('kategori')
+        $bukus = Buku::with('kategoris')
             ->withCount(['peminjamans as dipinjam_count' => function ($query) {
                 $query->where('status', 'Dipinjam');
             }])
@@ -38,7 +38,7 @@ class BukuController extends Controller
             'stok' => 'required|integer|min:0',
         ]);
 
-        $data = $request->except('cover');
+        $data = $request->except(['cover', 'kategori_id']);
 
         if ($request->hasFile('cover')) {
             $destinationPath = public_path('assets/covers');
@@ -50,7 +50,8 @@ class BukuController extends Controller
             $data['cover'] = 'assets/covers/' . $imageName;
         }
 
-        Buku::create($data);
+        $buku = Buku::create($data);
+        $buku->kategoris()->attach($request->kategori_id);
 
         \App\Models\Log::create([
             'user_id' => auth()->id(),
@@ -83,7 +84,7 @@ class BukuController extends Controller
             'stok' => 'required|integer|min:0',
         ]);
 
-        $data = $request->except('cover');
+        $data = $request->except(['cover', 'kategori_id']);
 
         if ($request->hasFile('cover')) {
             if ($buku->cover && file_exists(public_path($buku->cover))) {
@@ -99,6 +100,7 @@ class BukuController extends Controller
         }
 
         $buku->update($data);
+        $buku->kategoris()->sync([$request->kategori_id]);
 
         \App\Models\Log::create([
             'user_id' => auth()->id(),

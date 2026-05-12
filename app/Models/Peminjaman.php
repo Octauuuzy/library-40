@@ -9,27 +9,27 @@ class Peminjaman extends Model
 {
     use HasFactory;
 
-    protected $table = 'peminjamen';
+    protected $table = 'peminjaman';
 
     protected $fillable = [
-        'user_id',
+        'anggota_id',
         'buku_id',
-        'tanggal_pinjam',
-        'tanggal_kembali',
-        'tgl_dikembalikan',
-        'denda',
+        'tgl_pinjam',
+        'tgl_kembali_rencana',
+        'tgl_kembali_aktual',
         'status',
+        'denda'
     ];
 
     protected $casts = [
-        'tanggal_pinjam' => 'date',
-        'tanggal_kembali' => 'date',
-        'tgl_dikembalikan' => 'date',
+        'tgl_pinjam' => 'date',
+        'tgl_kembali_rencana' => 'date',
+        'tgl_kembali_aktual' => 'date',
     ];
 
-    public function user()
+    public function anggota()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Anggota::class);
     }
 
     public function buku()

@@ -30,17 +30,17 @@ class KategoriController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255|unique:kategoris',
+            'nama_kategori' => 'required|string|max:100|unique:kategoris',
         ]);
 
         \App\Models\Kategori::create([
-            'nama' => $request->nama,
+            'nama_kategori' => $request->nama_kategori,
         ]);
 
         \App\Models\Log::create([
             'user_id' => auth()->id(),
             'username' => auth()->user()->username ?? 'System',
-            'deskripsi' => 'Menambahkan kategori baru: ' . $request->nama
+            'deskripsi' => 'Menambahkan kategori baru: ' . $request->nama_kategori
         ]);
 
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil ditambahkan.');
@@ -70,17 +70,17 @@ class KategoriController extends Controller
         $kategori = \App\Models\Kategori::findOrFail($id);
 
         $request->validate([
-            'nama' => 'required|string|max:255|unique:kategoris,nama,' . $id,
+            'nama_kategori' => 'required|string|max:100|unique:kategoris,nama_kategori,' . $id,
         ]);
 
         $kategori->update([
-            'nama' => $request->nama,
+            'nama_kategori' => $request->nama_kategori,
         ]);
 
         \App\Models\Log::create([
             'user_id' => auth()->id(),
             'username' => auth()->user()->username ?? 'System',
-            'deskripsi' => 'Memperbarui nama kategori menjadi: ' . $request->nama
+            'deskripsi' => 'Memperbarui nama kategori menjadi: ' . $request->nama_kategori
         ]);
 
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diperbarui.');
@@ -97,7 +97,7 @@ class KategoriController extends Controller
         \App\Models\Log::create([
             'user_id' => auth()->id(),
             'username' => auth()->user()->username ?? 'System',
-            'deskripsi' => 'Menghapus kategori: ' . $kategori->nama
+            'deskripsi' => 'Menghapus kategori: ' . $kategori->nama_kategori
         ]);
 
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil dihapus.');

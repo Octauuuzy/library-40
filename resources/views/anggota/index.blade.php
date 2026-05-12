@@ -187,7 +187,7 @@
                                 <div class="sm:col-span-2">
                                     <label for="add_role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
                                     <select name="role" id="add_role" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
-                                        <option value="user">Anggota</option>
+                                        <option value="anggota">Anggota</option>
                                         <option value="admin">Admin</option>
                                     </select>
                                 </div>
@@ -258,7 +258,7 @@
                                     <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
                                     <select name="role" id="role" x-model="editForm.role" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                         <option value="admin">Admin</option>
-                                        <option value="user">Anggota</option>
+                                        <option value="anggota">Anggota</option>
                                     </select>
                                 </div>
                                 
