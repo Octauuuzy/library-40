@@ -10,18 +10,27 @@ use Illuminate\Support\Facades\Auth;
 
 class KatalogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Get all books with their categories
-        $bukus = Buku::with('kategoris')->get();
+        $selectedKategori = $request->get('kategori');
+
+        $query = Buku::with('kategoris');
+
+        if ($selectedKategori) {
+            $query->whereHas('kategoris', function ($q) use ($selectedKategori) {
+                $q->where('kategoris.id', $selectedKategori);
+            });
+        }
+
+        $bukus = $query->get();
         
         // Calculate fine for the current user based on active loans
         $denda = Peminjaman::where('anggota_id', Auth::id())
                     ->where('status', 'dipinjam')
                     ->sum('denda');
                     
-        $kategoris = Kategori::all();
+        $kategoris = Kategori::has('bukus')->take(10)->get();
 
-        return view('katalog.index', compact('bukus', 'denda', 'kategoris'));
+        return view('katalog.index', compact('bukus', 'denda', 'kategoris', 'selectedKategori'));
     }
 }

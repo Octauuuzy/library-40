@@ -11,18 +11,20 @@
             judul: '',
             pengarang: '',
             tahun_terbit: '',
-            stok: ''
+            stok: '',
+            sinopsis: ''
         },
         deleteForm: {
             id: ''
         },
         openEditModal(buku) {
             this.editForm.id = buku.id;
-            this.editForm.kategori_id = buku.kategori_id;
+            this.editForm.kategori_id = buku.kategoris && buku.kategoris.length > 0 ? buku.kategoris[0].id : '';
             this.editForm.judul = buku.judul;
             this.editForm.pengarang = buku.pengarang;
             this.editForm.tahun_terbit = buku.tahun_terbit;
             this.editForm.stok = buku.stok;
+            this.editForm.sinopsis = buku.sinopsis;
             this.editModalOpen = true;
         },
         openDeleteModal(id) {
@@ -255,9 +257,14 @@
                                     <input type="number" name="tahun_terbit" id="edit_tahun_terbit" x-model="editForm.tahun_terbit" placeholder="YYYY" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                 </div>
 
-                                <div>
+                                <div class="sm:col-span-2">
                                     <label for="edit_stok" class="block text-sm font-medium text-gray-700 mb-1">Total Stok</label>
                                     <input type="number" name="stok" id="edit_stok" x-model="editForm.stok" min="0" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
+                                </div>
+
+                                <div class="sm:col-span-2">
+                                    <label for="edit_sinopsis" class="block text-sm font-medium text-gray-700 mb-1">Sinopsis / Deskripsi (Opsional)</label>
+                                    <textarea name="sinopsis" id="edit_sinopsis" rows="4" x-model="editForm.sinopsis" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"></textarea>
                                 </div>
 
                                 <div class="sm:col-span-2">

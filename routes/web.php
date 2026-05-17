@@ -17,6 +17,7 @@ Route::get('/', function () {
 });
 
 Route::get('/katalog', [\App\Http\Controllers\KatalogController::class, 'index'])->middleware(['auth', 'verified'])->name('katalog');
+Route::get('/koleksi', [\App\Http\Controllers\KoleksiController::class, 'index'])->middleware(['auth', 'verified'])->name('koleksi');
 
 Route::middleware([\App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

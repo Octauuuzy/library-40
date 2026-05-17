@@ -36,6 +36,7 @@ class BukuController extends Controller
             'pengarang' => 'required|string|max:255',
             'tahun_terbit' => 'required|digits:4|integer',
             'stok' => 'required|integer|min:0',
+            'sinopsis' => 'nullable|string',
         ]);
 
         $data = $request->except(['cover', 'kategori_id']);
@@ -82,6 +83,7 @@ class BukuController extends Controller
             'pengarang' => 'required|string|max:255',
             'tahun_terbit' => 'required|digits:4|integer',
             'stok' => 'required|integer|min:0',
+            'sinopsis' => 'nullable|string',
         ]);
 
         $data = $request->except(['cover', 'kategori_id']);
