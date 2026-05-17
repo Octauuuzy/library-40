@@ -14,7 +14,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans text-gray-900 antialiased min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-700">
+<body class="font-sans text-gray-900 antialiased min-h-screen flex items-center justify-center bg-[#D9DACE]">
 
     <div class="w-full max-w-sm bg-white rounded-lg shadow-2xl p-8 m-4">
         <!-- Logo and Header -->

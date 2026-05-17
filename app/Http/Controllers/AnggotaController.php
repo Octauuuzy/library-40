@@ -43,7 +43,6 @@ class AnggotaController extends Controller
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
-            'no_hp' => $request->no_hp,
             'role' => $request->role,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
         ]);
@@ -150,6 +149,11 @@ class AnggotaController extends Controller
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
+        
+        if ($user->role === 'anggota') {
+            \App\Models\Anggota::where('id', $id)->delete();
+        }
+        
         $user->delete();
 
         \App\Models\Log::create([

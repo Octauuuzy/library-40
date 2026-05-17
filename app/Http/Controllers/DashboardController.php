@@ -22,6 +22,12 @@ class DashboardController extends Controller
         
         $peminjamanTerbaru = Peminjaman::with(['user', 'buku'])->latest()->take(5)->get();
 
+        $bukuPopuler = Buku::withCount('peminjamans')
+            ->has('peminjamans')
+            ->orderByDesc('peminjamans_count')
+            ->take(5)
+            ->get();
+
         return view('dashboard.index', compact(
             'totalBuku',
             'totalAnggota',
@@ -29,7 +35,8 @@ class DashboardController extends Controller
             'sedangDipinjam',
             'dikembalikan',
             'totalPeminjaman',
-            'peminjamanTerbaru'
+            'peminjamanTerbaru',
+            'bukuPopuler'
         ));
     }
 }

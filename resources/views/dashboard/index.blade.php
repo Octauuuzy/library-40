@@ -76,8 +76,10 @@
     </div>
 </div>
 
-<!-- Table Peminjaman Terbaru -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+<!-- Bottom Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Table Peminjaman Terbaru -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden lg:col-span-2">
     <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
         <div class="flex items-center text-gray-800 font-bold text-lg">
             <svg class="h-5 w-5 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -85,7 +87,7 @@
             </svg>
             Peminjaman Terbaru
         </div>
-        <a href="#" class="text-sm text-blue-600 border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-md font-medium transition-colors">
+        <a href="{{ route('peminjaman.index') }}" class="text-sm text-blue-600 border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-md font-medium transition-colors">
             Lihat Semua
         </a>
     </div>
@@ -129,5 +131,47 @@
             </tbody>
         </table>
     </div>
+</div>
+
+    <!-- Buku Populer -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+            <div class="flex items-center text-gray-800 font-bold text-lg">
+                <svg class="h-5 w-5 mr-2 text-pink-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Buku Populer
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-100 bg-white">
+                        <th class="px-6 py-3 text-sm font-semibold text-gray-800">Judul Buku</th>
+                        <th class="px-6 py-3 text-sm font-semibold text-gray-800 text-center">Total Dipinjam</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse($bukuPopuler as $buku)
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 text-sm text-gray-700 font-medium truncate max-w-[150px]">{{ $buku->judul }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-700 text-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
+                                {{ $buku->peminjamans_count }} kali
+                            </span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="2" class="px-6 py-8 text-center text-sm text-gray-500">
+                            Data belum mencukupi.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 @endsection

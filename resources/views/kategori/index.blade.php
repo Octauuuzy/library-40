@@ -7,14 +7,14 @@
         deleteModalOpen: false,
         editForm: {
             id: '',
-            nama: ''
+            nama_kategori: ''
         },
         deleteForm: {
             id: ''
         },
         openEditModal(kategori) {
             this.editForm.id = kategori.id;
-            this.editForm.nama = kategori.nama;
+            this.editForm.nama_kategori = kategori.nama_kategori;
             this.editModalOpen = true;
         },
         openDeleteModal(id) {
@@ -65,7 +65,7 @@
                                 @foreach($kategoris as $key => $kategori)
                                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                                         <td class="py-3 px-4 text-left whitespace-nowrap">{{ $key + 1 }}</td>
-                                        <td class="py-3 px-4 text-left font-medium text-gray-800">{{ $kategori->nama }}</td>
+                                        <td class="py-3 px-4 text-left font-medium text-gray-800">{{ $kategori->nama_kategori }}</td>
                                         <td class="py-3 px-4 text-center">
                                             <span class="bg-indigo-100 text-indigo-800 py-1 px-3 rounded-full text-xs font-bold">{{ $kategori->bukus_count ?? 0 }}</span>
                                         </td>
@@ -114,7 +114,7 @@
                             <div class="mt-2">
                                 <div>
                                     <label for="add_nama" class="block text-sm font-medium text-gray-700 mb-1">Nama Kategori</label>
-                                    <input type="text" name="nama" id="add_nama" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
+                                    <input type="text" name="nama_kategori" id="add_nama" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                 </div>
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                             <div class="mt-2">
                                 <div>
                                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Kategori</label>
-                                    <input type="text" name="nama" id="name" x-model="editForm.nama" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
+                                    <input type="text" name="nama_kategori" id="name" x-model="editForm.nama_kategori" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                 </div>
                             </div>
                         </div>

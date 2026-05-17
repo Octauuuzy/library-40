@@ -91,7 +91,7 @@
                                         <td class="py-3 px-4 text-left text-gray-800">{{ $buku->pengarang }}</td>
                                         <td class="py-3 px-4 text-left">
                                             <span class="bg-gray-100 text-gray-700 py-1 px-3 rounded-full text-xs font-medium border border-gray-200">
-                                                {{ $buku->kategori->nama ?? 'Tanpa Kategori' }}
+                                                {{ $buku->kategoris->first()->nama_kategori ?? 'Tanpa Kategori' }}
                                             </span>
                                         </td>
                                         <td class="py-3 px-4 text-center text-gray-800">{{ $buku->tahun_terbit }}</td>
@@ -180,7 +180,7 @@
                                     <select name="kategori_id" id="add_kategori_id" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                         <option value="" disabled selected>Pilih Kategori</option>
                                         @foreach($kategoris as $kategori)
-                                            <option value="{{ $kategori->id }}">{{ $kategori->nama }}</option>
+                                            <option value="{{ $kategori->id }}">{{ $kategori->nama_kategori }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -245,7 +245,7 @@
                                     <select name="kategori_id" id="edit_kategori_id" x-model="editForm.kategori_id" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                         <option value="" disabled>Pilih Kategori</option>
                                         @foreach($kategoris as $kategori)
-                                            <option value="{{ $kategori->id }}">{{ $kategori->nama }}</option>
+                                            <option value="{{ $kategori->id }}">{{ $kategori->nama_kategori }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -313,6 +313,10 @@
                     </form>
                 </div>
             </div>
+        </div>
+
+    </div>
+@endsectionv>
         </div>
 
     </div>

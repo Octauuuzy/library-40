@@ -55,7 +55,7 @@
                     
                     <!-- Category Badge -->
                     <div class="absolute top-3 right-3 bg-gray-900/80 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">
-                        {{ $buku->kategori->nama ?? 'Tanpa Kategori' }}
+                        {{ $buku->kategoris->first()->nama_kategori ?? 'Tanpa Kategori' }}
                     </div>
                 </div>
                 
