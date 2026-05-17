@@ -12,7 +12,8 @@ class KoleksiController extends Controller
     {
         $statusFilter = $request->get('status');
 
-        $query = Peminjaman::where('anggota_id', Auth::id())->with('buku.kategoris');
+        $anggotaId = Auth::user()->anggota_id;
+        $query = Peminjaman::where('anggota_id', $anggotaId)->with('buku.kategoris');
 
         if ($statusFilter) {
             if ($statusFilter == 'dipinjam') {

@@ -20,7 +20,7 @@ class DashboardController extends Controller
         $dikembalikan = Peminjaman::where('status', 'Dikembalikan')->count();
         $totalPeminjaman = Peminjaman::count();
         
-        $peminjamanTerbaru = Peminjaman::with(['user', 'buku'])->latest()->take(5)->get();
+        $peminjamanTerbaru = Peminjaman::with(['anggota', 'buku'])->latest()->take(5)->get();
 
         $bukuPopuler = Buku::withCount('peminjamans')
             ->has('peminjamans')

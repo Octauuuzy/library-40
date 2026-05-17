@@ -105,10 +105,10 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse($peminjamanTerbaru as $peminjaman)
                 <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="px-6 py-4 text-sm text-gray-700">{{ $peminjaman->user->name ?? 'User Terhapus' }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ $peminjaman->anggota->nama ?? 'Anggota Terhapus' }}</td>
                     <td class="px-6 py-4 text-sm text-gray-700">{{ $peminjaman->buku->judul ?? 'Buku Terhapus' }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-700">{{ $peminjaman->tanggal_pinjam->format('d/m/Y') }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-700">{{ $peminjaman->tanggal_kembali->format('d/m/Y') }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ $peminjaman->tgl_pinjam ? $peminjaman->tgl_pinjam->format('d/m/Y') : '-' }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-700">{{ $peminjaman->tgl_kembali_rencana ? $peminjaman->tgl_kembali_rencana->format('d/m/Y') : '-' }}</td>
                     <td class="px-6 py-4 text-sm">
                         @if($peminjaman->status == 'Dipinjam')
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">

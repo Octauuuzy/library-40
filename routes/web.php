@@ -16,8 +16,11 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/katalog', [\App\Http\Controllers\KatalogController::class, 'index'])->middleware(['auth', 'verified'])->name('katalog');
-Route::get('/koleksi', [\App\Http\Controllers\KoleksiController::class, 'index'])->middleware(['auth', 'verified'])->name('koleksi');
+Route::get('/katalog', [\App\Http\Controllers\KatalogController::class, 'index'])->middleware(['auth'])->name('katalog');
+Route::post('/katalog/pinjam', [\App\Http\Controllers\KatalogController::class, 'pinjamBuku'])->middleware(['auth'])->name('katalog.pinjam');
+Route::get('/koleksi', [\App\Http\Controllers\KoleksiController::class, 'index'])->middleware(['auth'])->name('koleksi');
+Route::get('/favorit', [\App\Http\Controllers\FavoritController::class, 'index'])->middleware(['auth'])->name('favorit.index');
+Route::post('/favorit/toggle', [\App\Http\Controllers\FavoritController::class, 'toggle'])->middleware(['auth'])->name('favorit.toggle');
 
 Route::middleware([\App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

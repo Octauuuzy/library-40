@@ -45,7 +45,7 @@
                     </svg>
                     Koleksi
                 </a>
-                <a href="#" class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#233757] transition-all">
+                <a href="{{ route('favorit.index') }}" class="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium {{ request()->routeIs('favorit.index') ? 'bg-[#233757] text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-[#233757]' }} transition-all">
                     <svg class="mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
@@ -115,5 +115,49 @@
         
     </main>
 
+    <script>
+        window.toggleFavorit = function(bukuId, event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (!csrfToken) {
+                console.error('CSRF token not found');
+                return;
+            }
+
+            fetch('/favorit/toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ buku_id: bukuId })
+            })
+            .then(async response => {
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error('Server error:', response.status, text);
+                    throw new Error('Server error');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if(data.success) {
+                    window.dispatchEvent(new CustomEvent('favorit-updated', { 
+                        detail: { buku_id: bukuId, count: data.count, is_favorited: data.is_favorited } 
+                    }));
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling favorit:', error);
+            });
+        }
+    </script>
 </body>
 </html>
