@@ -110,13 +110,17 @@
                     <td class="px-6 py-4 text-sm text-gray-700">{{ $peminjaman->tgl_pinjam ? $peminjaman->tgl_pinjam->format('d/m/Y') : '-' }}</td>
                     <td class="px-6 py-4 text-sm text-gray-700">{{ $peminjaman->tgl_kembali_rencana ? $peminjaman->tgl_kembali_rencana->format('d/m/Y') : '-' }}</td>
                     <td class="px-6 py-4 text-sm">
-                        @if($peminjaman->status == 'Dipinjam')
+                        @if($peminjaman->isBorrowed())
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
-                                {{ $peminjaman->status }}
+                                {{ $peminjaman->status_label }}
+                            </span>
+                        @elseif($peminjaman->isLate())
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+                                {{ $peminjaman->status_label }}
                             </span>
                         @else
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
-                                {{ $peminjaman->status }}
+                                {{ $peminjaman->status_label }}
                             </span>
                         @endif
                     </td>

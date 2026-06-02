@@ -18,6 +18,7 @@ Route::get('/', function () {
 
 Route::get('/katalog', [\App\Http\Controllers\KatalogController::class, 'index'])->middleware(['auth'])->name('katalog');
 Route::post('/katalog/pinjam', [\App\Http\Controllers\KatalogController::class, 'pinjamBuku'])->middleware(['auth'])->name('katalog.pinjam');
+Route::post('/katalog/kembalikan', [\App\Http\Controllers\KatalogController::class, 'kembalikanBuku'])->middleware(['auth'])->name('katalog.kembalikan');
 Route::get('/koleksi', [\App\Http\Controllers\KoleksiController::class, 'index'])->middleware(['auth'])->name('koleksi');
 Route::get('/favorit', [\App\Http\Controllers\FavoritController::class, 'index'])->middleware(['auth'])->name('favorit.index');
 Route::post('/favorit/toggle', [\App\Http\Controllers\FavoritController::class, 'toggle'])->middleware(['auth'])->name('favorit.toggle');

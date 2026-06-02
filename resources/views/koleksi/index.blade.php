@@ -62,8 +62,8 @@
                     </div>
                     
                     <!-- Status Badge -->
-                    @if($peminjaman->status == 'Dikembalikan')
-                        <div class="absolute bottom-3 left-3 bg-green-500 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">Selesai</div>
+                    @if($peminjaman->isReturned())
+                        <div class="absolute bottom-3 left-3 bg-green-500 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">Dikembalikan</div>
                     @else
                         <div class="absolute bottom-3 left-3 bg-yellow-500 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">Dipinjam</div>
                     @endif

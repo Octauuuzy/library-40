@@ -26,8 +26,10 @@
     <div class="mt-10" x-data="{
         modalOpen: false,
         borrowModalOpen: false,
+        returnModalOpen: false,
         borrowDuration: 7,
         selectedBook: null,
+        isSubmitting: false,
         openModal(detail) {
             this.selectedBook = {
                 ...detail.buku,
@@ -37,13 +39,31 @@
             this.modalOpen = true;
         },
         openBorrowModal() {
+            if (!this.selectedBook) return;
             this.modalOpen = false;
             this.borrowModalOpen = true;
         },
+        openReturnModal() {
+            if (!this.selectedBook || !this.selectedBook.active_loan_id) return;
+            this.modalOpen = false;
+            this.returnModalOpen = true;
+        },
+        handlePrimaryAction() {
+            if (this.selectedBook && this.selectedBook.is_borrowed_by_user) {
+                this.openReturnModal();
+                return;
+            }
+
+            this.openBorrowModal();
+        },
         submitBorrow() {
+            if (this.isSubmitting || !this.selectedBook) return;
+
             const csrfToken = document.querySelector('meta[name=\'csrf-token\']');
             if (!csrfToken) return alert('CSRF token missing');
-            
+
+            this.isSubmitting = true;
+
             fetch('/katalog/pinjam', {
                 method: 'POST',
                 headers: {
@@ -59,7 +79,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                if(data.success) {
+                if (data.success) {
                     alert(data.message);
                     this.borrowModalOpen = false;
                     window.location.reload();
@@ -70,6 +90,50 @@
             .catch(error => {
                 alert('Terjadi kesalahan sistem.');
                 console.error(error);
+            })
+            .finally(() => {
+                this.isSubmitting = false;
+            });
+        },
+        submitReturn() {
+            if (this.isSubmitting || !this.selectedBook || !this.selectedBook.active_loan_id) return;
+
+            const csrfToken = document.querySelector('meta[name=\'csrf-token\']');
+            if (!csrfToken) return alert('CSRF token missing');
+
+            this.isSubmitting = true;
+
+            fetch('/katalog/kembalikan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    peminjaman_id: this.selectedBook.active_loan_id
+                })
+            })
+            .then(async response => {
+                const data = await response.json();
+                return { ok: response.ok, data };
+            })
+            .then(({ ok, data }) => {
+                if (ok && data.success) {
+                    alert(data.message);
+                    this.returnModalOpen = false;
+                    window.location.reload();
+                } else {
+                    alert('Gagal: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Terjadi kesalahan sistem.');
+                console.error(error);
+            })
+            .finally(() => {
+                this.isSubmitting = false;
             });
         }
     }" @open-book-modal.window="openModal($event.detail)">
@@ -91,7 +155,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
             @forelse($bukus as $buku)
             <div x-data="{
-                    buku: {{ json_encode(['id' => $buku->id, 'judul' => $buku->judul, 'pengarang' => $buku->pengarang, 'sinopsis' => $buku->sinopsis, 'favorits_count' => $buku->favorits_count, 'is_favorited' => $buku->is_favorited]) }},
+                    buku: {{ json_encode(['id' => $buku->id, 'judul' => $buku->judul, 'pengarang' => $buku->pengarang, 'sinopsis' => $buku->sinopsis, 'favorits_count' => $buku->favorits_count, 'is_favorited' => $buku->is_favorited, 'is_borrowed_by_user' => (bool) ($buku->is_borrowed_by_user ?? false), 'active_loan_id' => optional($activePeminjamanByBook->get($buku->id))->id]) }},
                     kategori: {{ json_encode($buku->kategoris->first()->nama_kategori ?? 'Tanpa Kategori') }},
                     cover: {{ json_encode($buku->cover ? asset($buku->cover) : '') }}
                  }"
@@ -178,11 +242,19 @@
                                 </div>
                                 
                                 <!-- Borrow Button -->
-                                <button @click="openBorrowModal()" class="w-full sm:w-auto bg-[#0b1221] hover:bg-[#1e2a44] text-white font-bold py-3.5 px-8 rounded-xl shadow-md transition-all flex items-center justify-center space-x-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
-                                    <span>Pinjam Buku</span>
+                                <button @click="handlePrimaryAction()" :class="selectedBook && selectedBook.is_borrowed_by_user ? 'bg-red-600 hover:bg-red-700' : 'bg-[#0b1221] hover:bg-[#1e2a44]'" class="w-full sm:w-auto text-white font-bold py-3.5 px-8 rounded-xl shadow-md transition-all flex items-center justify-center space-x-2">
+                                    <template x-if="selectedBook && selectedBook.is_borrowed_by_user">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7.5A2.5 2.5 0 016.5 5h11A2.5 2.5 0 0120 7.5v10A2.5 2.5 0 0117.5 20h-11A2.5 2.5 0 014 17.5v-10z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h10m0 0l-3-3m3 3l-3 3" />
+                                        </svg>
+                                    </template>
+                                    <template x-if="!selectedBook || !selectedBook.is_borrowed_by_user">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                    </template>
+                                    <span x-text="selectedBook && selectedBook.is_borrowed_by_user ? 'Kembalikan Buku' : 'Pinjam Buku'"></span>
                                 </button>
                                 
                                 <!-- Star Action -->
@@ -251,7 +323,52 @@
 
                         <div class="flex space-x-3 justify-center">
                             <button @click="borrowModalOpen = false" class="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-full shadow-sm transition-colors w-1/2">Batalkan</button>
-                            <button @click="submitBorrow()" class="px-8 py-3 bg-[#0b1221] hover:bg-[#1e2a44] text-white font-bold rounded-full shadow-md transition-colors w-1/2">Lanjutkan</button>
+                            <button @click="submitBorrow()" :disabled="isSubmitting" class="px-8 py-3 bg-[#0b1221] hover:bg-[#1e2a44] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-full shadow-md transition-colors w-1/2">Lanjutkan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Return Modal -->
+        <div x-show="returnModalOpen" style="display: none;" class="fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="return-modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div x-show="returnModalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity backdrop-blur-sm" aria-hidden="true" @click="returnModalOpen = false"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div x-show="returnModalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-[28px] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl w-full">
+                    <div class="px-7 pt-8 pb-7 sm:px-8">
+                        <div class="flex justify-center mb-7">
+                            <div class="w-20 h-20 rounded-full bg-amber-100 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-amber-500" viewBox="0 0 24 24" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9.401 3.003c1.155-1.998 4.043-1.998 5.198 0l7.354 12.72c1.154 1.998-.289 4.497-2.599 4.497H4.646c-2.31 0-3.753-2.5-2.599-4.498L9.4 3.003zM12 8.25a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <h3 id="return-modal-title" class="text-3xl font-extrabold text-center text-gray-900 mb-6">Kembalikan Buku?</h3>
+
+                        <div class="bg-gray-50 rounded-2xl p-5 flex items-center gap-4 mb-8 border border-gray-100">
+                            <div class="w-20 h-28 bg-gray-200 rounded-xl flex-shrink-0 overflow-hidden shadow-sm">
+                                <template x-if="selectedBook && selectedBook.cover_url">
+                                    <img :src="selectedBook.cover_url" :alt="'Cover ' + selectedBook.judul" class="w-full h-full object-cover">
+                                </template>
+                                <template x-if="selectedBook && !selectedBook.cover_url">
+                                    <div class="w-full h-full flex items-center justify-center text-xs font-semibold text-gray-500">No Cover</div>
+                                </template>
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="text-2xl font-bold text-gray-900 leading-tight mb-2" x-text="selectedBook ? selectedBook.judul : ''"></h4>
+                                <p class="text-xl text-gray-500 mb-3" x-text="selectedBook ? selectedBook.pengarang : ''"></p>
+                                <span class="inline-flex bg-[#37355a] text-white text-xs font-bold px-3 py-1 rounded-full" x-text="selectedBook ? selectedBook.kategori_name : ''"></span>
+                            </div>
+                        </div>
+
+                        <p class="text-center text-2xl text-gray-500 mb-8">Yakin ingin mengembalikan buku ini?</p>
+
+                        <div class="flex justify-center gap-3">
+                            <button @click="returnModalOpen = false" class="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-full shadow-sm transition-colors min-w-36">Batalkan</button>
+                            <button @click="submitReturn()" :disabled="isSubmitting" class="px-8 py-3 bg-red-600 hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-full shadow-md transition-colors min-w-36">Lanjutkan</button>
                         </div>
                     </div>
                 </div>

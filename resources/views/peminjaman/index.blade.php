@@ -96,9 +96,9 @@
                                             Rp {{ number_format($pinjam->denda, 0, ',', '.') }}
                                         </td>
                                         <td class="py-3 px-4 text-center">
-                                            @if($pinjam->status == 'dipinjam')
+                                            @if($pinjam->isBorrowed())
                                                 <span class="bg-yellow-100 text-yellow-800 py-1 px-3 rounded-full text-xs font-semibold border border-yellow-200">Dipinjam</span>
-                                            @elseif($pinjam->status == 'terlambat')
+                                            @elseif($pinjam->isLate())
                                                 <span class="bg-red-100 text-red-800 py-1 px-3 rounded-full text-xs font-semibold border border-red-200">Terlambat</span>
                                             @else
                                                 <span class="bg-green-100 text-green-800 py-1 px-3 rounded-full text-xs font-semibold border border-green-200">Dikembalikan</span>
@@ -106,7 +106,7 @@
                                         </td>
                                         <td class="py-3 px-4 text-center">
                                             <div class="flex item-center justify-center space-x-2">
-                                                @if($pinjam->status == 'dipinjam' || $pinjam->status == 'terlambat')
+                                                @if($pinjam->isActive())
                                                     <button type="button" @click="openReturnModal({{ $pinjam->id }})" class="bg-green-500 hover:bg-green-600 text-white p-1.5 rounded-md transition-colors" title="Tandai Dikembalikan">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />

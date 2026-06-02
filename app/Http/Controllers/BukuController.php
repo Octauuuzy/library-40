@@ -13,7 +13,7 @@ class BukuController extends Controller
     {
         $bukus = Buku::with('kategoris')
             ->withCount(['peminjamans as dipinjam_count' => function ($query) {
-                $query->where('status', 'Dipinjam');
+                $query->active();
             }])
             ->paginate(15);
         $kategoris = Kategori::all();

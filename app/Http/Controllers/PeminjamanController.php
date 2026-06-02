@@ -18,7 +18,7 @@ class PeminjamanController extends Controller
         $setting = Setting::first() ?? Setting::create(['toleransi_hari' => 1, 'denda_per_hari' => 5000]);
         $now = Carbon::now('Asia/Jakarta');
 
-        $activePeminjamans = Peminjaman::where('status', 'dipinjam')->get();
+        $activePeminjamans = Peminjaman::active()->get();
         foreach ($activePeminjamans as $pinjam) {
             $batasKembali = Carbon::parse($pinjam->tgl_kembali_rencana)->startOfDay();
             $hariTerlambat = $now->copy()->startOfDay()->diffInDays($batasKembali, false);
@@ -28,7 +28,18 @@ class PeminjamanController extends Controller
                 // Number of days late minus tolerance
                 $hariKenaDenda = abs($hariTerlambat) - $setting->toleransi_hari;
                 $denda = $hariKenaDenda * $setting->denda_per_hari;
-                $pinjam->update(['denda' => $denda]);
+                $pinjam->update([
+                    'status' => Peminjaman::STATUS_TERLAMBAT,
+                    'denda' => $denda,
+                ]);
+                continue;
+            }
+
+            if ($pinjam->isLate() || $pinjam->denda !== 0) {
+                $pinjam->update([
+                    'status' => Peminjaman::STATUS_DIPINJAM,
+                    'denda' => 0,
+                ]);
             }
         }
 
@@ -44,9 +55,9 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::findOrFail($id);
         
-        if ($peminjaman->status === 'dipinjam') {
+        if ($peminjaman->isActive()) {
             $peminjaman->update([
-                'status' => 'dikembalikan',
+                'status' => Peminjaman::STATUS_DIKEMBALIKAN,
                 'tgl_kembali_aktual' => Carbon::now('Asia/Jakarta')
             ]);
             

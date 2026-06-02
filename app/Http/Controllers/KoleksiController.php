@@ -17,9 +17,9 @@ class KoleksiController extends Controller
 
         if ($statusFilter) {
             if ($statusFilter == 'dipinjam') {
-                $query->where('status', 'Dipinjam');
+                $query->active();
             } elseif ($statusFilter == 'dikembalikan') {
-                $query->where('status', 'Dikembalikan');
+                $query->returned();
             }
         }
 

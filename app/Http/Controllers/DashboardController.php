@@ -16,8 +16,8 @@ class DashboardController extends Controller
         $totalAnggota = User::count();
         $totalKategori = Kategori::count();
         
-        $sedangDipinjam = Peminjaman::where('status', 'Dipinjam')->count();
-        $dikembalikan = Peminjaman::where('status', 'Dikembalikan')->count();
+        $sedangDipinjam = Peminjaman::active()->count();
+        $dikembalikan = Peminjaman::returned()->count();
         $totalPeminjaman = Peminjaman::count();
         
         $peminjamanTerbaru = Peminjaman::with(['anggota', 'buku'])->latest()->take(5)->get();
