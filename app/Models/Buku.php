@@ -24,4 +24,9 @@ class Buku extends Model
     {
         return $this->hasMany(Favorit::class);
     }
+
+    public function permintaanPeminjamans()
+    {
+        return $this->hasMany(PermintaanPeminjaman::class);
+    }
 }

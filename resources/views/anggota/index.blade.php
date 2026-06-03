@@ -86,7 +86,7 @@
                                 @foreach($anggotas as $key => $anggota)
                                     <tr class="border-b border-gray-200 hover:bg-gray-50">
                                         <td class="py-3 px-4 text-left whitespace-nowrap">{{ $key + 1 }}</td>
-                                        <td class="py-3 px-4 text-left"><span class="font-medium text-pink-500">{{ str_pad($anggota->id, 7, '0', STR_PAD_LEFT) }}</span></td>
+                                        <td class="py-3 px-4 text-left"><span class="font-medium text-gray-900">{{ str_pad($anggota->id, 7, '0', STR_PAD_LEFT) }}</span></td>
                                         <td class="py-3 px-4 text-left text-gray-800">{{ $anggota->name }}</td>
                                         <td class="py-3 px-4 text-left text-gray-800">{{ $anggota->username }}</td>
                                         <td class="py-3 px-4 text-left text-gray-800">{{ $anggota->email }}</td>
@@ -181,7 +181,7 @@
 
                                 <div>
                                     <label for="add_no_hp" class="block text-sm font-medium text-gray-700 mb-1">No. HP</label>
-                                    <input type="text" name="no_hp" id="add_no_hp" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                    <input type="number" name="no_hp" id="add_no_hp" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
                                 </div>
 
                                 <div class="sm:col-span-2">
@@ -251,7 +251,7 @@
 
                                 <div>
                                     <label for="no_hp" class="block text-sm font-medium text-gray-700 mb-1">No. HP</label>
-                                    <input type="text" name="no_hp" id="no_hp" x-model="editForm.no_hp" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                                    <input type="number" name="no_hp" id="no_hp" x-model="editForm.no_hp" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md">
                                 </div>
 
                                 <div class="sm:col-span-2">

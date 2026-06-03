@@ -41,7 +41,7 @@
                             <tbody class="text-gray-600 text-sm font-light">
                                 @forelse($logs as $log)
                                     <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                        <td class="py-3 px-4 text-left whitespace-nowrap"><span class="font-medium text-pink-500">{{ $log->log_id }}</span></td>
+                                        <td class="py-3 px-4 text-left whitespace-nowrap"><span class="font-medium text-gray-900">{{ $log->log_id }}</span></td>
                                         <td class="py-3 px-4 text-left text-gray-800 font-medium">{{ $log->username ?? 'Sistem / Guest' }}</td>
                                         <td class="py-3 px-4 text-left"><span class="font-medium text-blue-500">{{ $log->user_id ? str_pad($log->user_id, 7, '0', STR_PAD_LEFT) : '-' }}</span></td>
                                         <td class="py-3 px-4 text-left text-gray-800">{{ $log->deskripsi }}</td>

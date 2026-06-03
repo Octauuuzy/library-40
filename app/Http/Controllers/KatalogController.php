@@ -94,18 +94,28 @@ class KatalogController extends Controller
             return response()->json(['success' => false, 'message' => 'Anda masih meminjam buku ini.']);
         }
 
-        $peminjaman = Peminjaman::create([
+        $alreadyRequested = \App\Models\PermintaanPeminjaman::where('anggota_id', $user->anggota_id)
+            ->where('buku_id', $buku->id)
+            ->where('jenis', \App\Models\PermintaanPeminjaman::JENIS_PINJAM)
+            ->where('status', \App\Models\PermintaanPeminjaman::STATUS_PENDING)
+            ->exists();
+
+        if ($alreadyRequested) {
+            return response()->json(['success' => false, 'message' => 'Anda sudah mengajukan peminjaman untuk buku ini. Menunggu persetujuan admin.']);
+        }
+
+        \App\Models\PermintaanPeminjaman::create([
+            'user_id' => $user->id,
             'anggota_id' => $user->anggota_id,
             'buku_id' => $buku->id,
-            'tgl_pinjam' => now(),
-            'tgl_kembali_rencana' => now()->addDays($request->durasi),
-            'status' => Peminjaman::STATUS_DIPINJAM,
-            'denda' => 0
+            'jenis' => \App\Models\PermintaanPeminjaman::JENIS_PINJAM,
+            'durasi' => $request->durasi,
+            'status' => \App\Models\PermintaanPeminjaman::STATUS_PENDING
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Buku berhasil dipinjam hingga ' . $peminjaman->tgl_kembali_rencana->format('d M Y') . '.',
+            'message' => 'Permintaan peminjaman berhasil dikirim. Menunggu persetujuan admin.',
         ]);
     }
 
@@ -144,20 +154,28 @@ class KatalogController extends Controller
             ], 422);
         }
 
-        $peminjaman->update([
-            'status' => Peminjaman::STATUS_DIKEMBALIKAN,
-            'tgl_kembali_aktual' => now(),
-        ]);
+        $alreadyRequested = \App\Models\PermintaanPeminjaman::where('anggota_id', $user->anggota_id)
+            ->where('peminjaman_id', $peminjaman->id)
+            ->where('jenis', \App\Models\PermintaanPeminjaman::JENIS_KEMBALIKAN)
+            ->where('status', \App\Models\PermintaanPeminjaman::STATUS_PENDING)
+            ->exists();
 
-        Log::create([
+        if ($alreadyRequested) {
+            return response()->json(['success' => false, 'message' => 'Anda sudah mengajukan pengembalian untuk buku ini. Menunggu persetujuan admin.']);
+        }
+
+        \App\Models\PermintaanPeminjaman::create([
             'user_id' => $user->id,
-            'username' => $user->username ?? $user->name,
-            'deskripsi' => 'Mengembalikan buku: ' . ($peminjaman->buku->judul ?? 'Tanpa Judul') . '. ID Pinjam: ' . $peminjaman->id,
+            'anggota_id' => $user->anggota_id,
+            'buku_id' => $peminjaman->buku_id,
+            'peminjaman_id' => $peminjaman->id,
+            'jenis' => \App\Models\PermintaanPeminjaman::JENIS_KEMBALIKAN,
+            'status' => \App\Models\PermintaanPeminjaman::STATUS_PENDING
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Buku berhasil dikembalikan.',
+            'message' => 'Permintaan pengembalian berhasil dikirim. Menunggu persetujuan admin.',
             'status' => $peminjaman->fresh()->status_label,
         ]);
     }

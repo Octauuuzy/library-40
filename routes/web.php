@@ -33,6 +33,8 @@ Route::middleware([\App\Http\Middleware\AdminMiddleware::class])->group(function
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::delete('/peminjaman/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
     Route::post('/peminjaman/{peminjaman}/return', [PeminjamanController::class, 'returnBook'])->name('peminjaman.return');
+    Route::post('/peminjaman/permintaan/{id}/acc', [PeminjamanController::class, 'accPermintaan'])->name('peminjaman.permintaan.acc');
+    Route::post('/peminjaman/permintaan/{id}/tolak', [PeminjamanController::class, 'tolakPermintaan'])->name('peminjaman.permintaan.tolak');
     Route::post('/peminjaman/settings', [PeminjamanController::class, 'updateSetting'])->name('peminjaman.settings');
     
     // Logs Routes

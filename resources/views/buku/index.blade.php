@@ -79,7 +79,7 @@
                             <tbody class="text-gray-600 text-sm font-light">
                                 @foreach($bukus as $buku)
                                     <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                        <td class="py-3 px-4 text-left"><span class="font-medium text-pink-500">{{ str_pad($buku->id, 7, '0', STR_PAD_LEFT) }}</span></td>
+                                        <td class="py-3 px-4 text-left"><span class="font-medium text-gray-900">{{ str_pad($buku->id, 7, '0', STR_PAD_LEFT) }}</span></td>
                                         <td class="py-3 px-4 text-center flex justify-center">
                                             @if($buku->cover)
                                                 <img src="{{ asset($buku->cover) }}" alt="Cover {{ $buku->judul }}" class="h-16 w-12 object-cover rounded shadow-sm border border-gray-200">
@@ -168,8 +168,8 @@
                             </h3>
                             <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="sm:col-span-2">
-                                    <label for="add_judul" class="block text-sm font-medium text-gray-700 mb-1">Judul Buku</label>
-                                    <input type="text" name="judul" id="add_judul" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
+                                    <label for="add_stok" class="block text-sm font-medium text-gray-700 mb-1">Total Stok</label>
+                                    <input type="number" name="stok" id="add_stok" min="0" step="1" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                 </div>
                                 
                                 <div>
@@ -192,9 +192,9 @@
                                     <input type="number" name="tahun_terbit" id="add_tahun_terbit" placeholder="YYYY" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                 </div>
 
-                                <div>
+                                <div class="sm:col-span-2">
                                     <label for="add_stok" class="block text-sm font-medium text-gray-700 mb-1">Total Stok</label>
-                                    <input type="number" name="stok" id="add_stok" min="0" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
+                                    <input type="number" name="stok" id="add_stok" min="0" step="1" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                 </div>
 
                                 <div class="sm:col-span-2">
@@ -258,8 +258,8 @@
                                 </div>
 
                                 <div class="sm:col-span-2">
-                                    <label for="edit_stok" class="block text-sm font-medium text-gray-700 mb-1">Total Stok</label>
-                                    <input type="number" name="stok" id="edit_stok" x-model="editForm.stok" min="0" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
+                                    <label for="add_stok" class="block text-sm font-medium text-gray-700 mb-1">Total Stok</label>
+                                    <input type="number" name="stok" id="add_stok" min="0" step="1" class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md" required>
                                 </div>
 
                                 <div class="sm:col-span-2">

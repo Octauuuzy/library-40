@@ -5,9 +5,10 @@
         settingModalOpen: false, 
         deleteModalOpen: false,
         returnModalOpen: false,
+        accModalOpen: {{ request()->has('page_permintaan') ? 'true' : 'false' }},
         settingForm: {
-            toleransi_hari: {{ $setting->toleransi_hari }},
-            denda_per_hari: {{ $setting->denda_per_hari }}
+            toleransi_hari: {{ $setting->toleransi_hari ?? 1 }},
+            denda_per_hari: {{ $setting->denda_per_hari ?? 5000 }}
         },
         deleteForm: {
             id: ''
@@ -53,6 +54,14 @@
                     <div class="mb-6 flex justify-between items-center">
                         <h2 class="text-3xl font-bold text-[#1e293b]">Data Peminjaman</h2>
                         <div class="flex space-x-3">
+                            <button type="button" @click="accModalOpen = true" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 font-medium p-2 rounded-md transition-colors shadow-sm flex items-center justify-center relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                @if($permintaans->total() > 0)
+                                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">{{ $permintaans->total() }}</span>
+                                @endif
+                            </button>
                             <button type="button" @click="settingModalOpen = true" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 font-medium p-2 rounded-md transition-colors shadow-sm flex items-center justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                   <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -262,6 +271,96 @@
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACC Modal Popup -->
+        <div x-show="accModalOpen" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div x-show="accModalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="accModalOpen = false"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div x-show="accModalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="flex justify-between items-center mb-4 border-b pb-3">
+                            <h3 class="text-xl leading-6 font-bold text-gray-900" id="modal-title">
+                                Persetujuan Peminjaman & Pengembalian
+                            </h3>
+                            <button @click="accModalOpen = false" class="text-gray-400 hover:text-gray-500">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="mt-2 overflow-x-auto">
+                            <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="py-2 px-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">No</th>
+                                        <th class="py-2 px-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">Jenis</th>
+                                        <th class="py-2 px-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">Buku</th>
+                                        <th class="py-2 px-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">Anggota</th>
+                                        <th class="py-2 px-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">ID / NIS</th>
+                                        <th class="py-2 px-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">Durasi</th>
+                                        <th class="py-2 px-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider border-b">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    @forelse($permintaans as $key => $req)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="py-2 px-3 text-sm text-gray-700">{{ $permintaans->firstItem() + $key }}</td>
+                                        <td class="py-2 px-3 text-sm">
+                                            @if($req->isBorrowRequest())
+                                                <span class="bg-blue-100 text-blue-800 py-1 px-2 rounded-md text-[10px] font-bold">Pinjam</span>
+                                            @else
+                                                <span class="bg-green-100 text-green-800 py-1 px-2 rounded-md text-[10px] font-bold">Kembali</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-2 px-3 text-sm text-gray-700 font-medium">{{ $req->buku->judul ?? '-' }}</td>
+                                        <td class="py-2 px-3 text-sm text-gray-700">{{ $req->anggota->nama ?? '-' }}</td>
+                                        <td class="py-2 px-3 text-center text-sm text-gray-500 font-mono">{{ $req->anggota->nis ?? '-' }}</td>
+                                        <td class="py-2 px-3 text-center text-sm text-gray-700">{{ $req->durasi_label }}</td>
+                                        <td class="py-2 px-3 text-center">
+                                            <div class="flex justify-center space-x-2">
+                                                <form action="{{ route('peminjaman.permintaan.acc', $req->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1 px-3 rounded shadow-sm transition-colors">Terima</button>
+                                                </form>
+                                                <form action="{{ route('peminjaman.permintaan.tolak', $req->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-1 px-3 rounded shadow-sm transition-colors">Tolak</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                    <tr>
+                                        <td colspan="7" class="py-6 text-center text-gray-500 text-sm">Tidak ada permintaan yang menunggu persetujuan.</td>
+                                    </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        @if ($permintaans->hasPages())
+                            <div class="mt-4 flex justify-center items-center space-x-2 pb-2">
+                                @if ($permintaans->onFirstPage())
+                                    <span class="bg-gray-200 text-gray-400 px-3 py-1 rounded cursor-not-allowed font-bold text-xs">&lt;</span>
+                                @else
+                                    <a href="{{ $permintaans->previousPageUrl() }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded transition-colors font-bold text-xs">&lt;</a>
+                                @endif
+                                
+                                <span class="text-gray-700 font-medium px-3 text-xs">{{ $permintaans->currentPage() }} / {{ $permintaans->lastPage() }}</span>
+                                
+                                @if ($permintaans->hasMorePages())
+                                    <a href="{{ $permintaans->nextPageUrl() }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded transition-colors font-bold text-xs">&gt;</a>
+                                @else
+                                    <span class="bg-gray-200 text-gray-400 px-3 py-1 rounded cursor-not-allowed font-bold text-xs">&gt;</span>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
